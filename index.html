@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TradeCheck</title>
+    <style>
+        :root {
+            --bg-primary: #f5f7fa;
+            --bg-secondary: #ffffff;
+            --bg-card: #f0f4f8;
+            --text-primary: #1a202c;
+            --text-secondary: #64748b;
+            --accent: #3b82f6;
+            --green: #22c55e;
+            --yellow: #eab308;
+            --red-light: #f87171;
+            --red-dark: #991b1b;
+            --border: #e2e8f0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: var(--accent);
+            margin-bottom: 5px;
+        }
+
+        .tagline {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .ticker-input {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .ticker-input input {
+            padding: 12px 20px;
+            font-size: 1.1rem;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            text-transform: uppercase;
+            width: 200px;
+            text-align: center;
+        }
+
+        .ticker-input input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .card {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .card h2 {
+            color: var(--accent);
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 10px;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .checklist-item:last-child {
+            border-bottom: none;
+        }
+
+        .checklist-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-right: 12px;
+            margin-top: 2px;
+            accent-color: var(--accent);
+            cursor: pointer;
+        }
+
+        .checklist-item label {
+            flex: 1;
+            cursor: pointer;
+        }
+
+        .checklist-item .label-text {
+            font-weight: 500;
+        }
+
+        .checklist-item .note {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 4px;
+            font-style: italic;
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+            gap: 12px;
+        }
+
+        .dropdown-item:last-child {
+            border-bottom: none;
+        }
+
+        .dropdown-item .dropdown-label {
+            flex: 1;
+        }
+
+        .dropdown-item .label-text {
+            font-weight: 500;
+        }
+
+        .dropdown-item .note {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 4px;
+            font-style: italic;
+        }
+
+        select {
+            padding: 8px 12px;
+            font-size: 0.95rem;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            background: var(--bg-card);
+            color: var(--text-primary);
+            cursor: pointer;
+            min-width: 140px;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        textarea {
+            width: 100%;
+            padding: 12px 15px;
+            font-size: 1rem;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            background: var(--bg-card);
+            color: var(--text-primary);
+            font-family: inherit;
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        textarea::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .setup-section {
+            display: none;
+            margin-top: 15px;
+            padding: 15px;
+            background: var(--bg-card);
+            border-radius: 8px;
+        }
+
+        .setup-section.active {
+            display: block;
+        }
+
+        .setup-section h3 {
+            color: var(--green);
+            font-size: 1rem;
+            margin-bottom: 10px;
+        }
+
+        /* Score Display */
+        .score-card {
+            text-align: center;
+            padding: 30px;
+        }
+
+        .score-display {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            padding: 20px 40px;
+            border-radius: 12px;
+            display: inline-block;
+            min-width: 200px;
+        }
+
+        .score-display.green {
+            background: var(--green);
+            color: #fff;
+        }
+
+        .score-display.yellow {
+            background: var(--yellow);
+            color: #1a202c;
+        }
+
+        .score-display.red-1 {
+            background: #ef4444;
+            color: #fff;
+        }
+
+        .score-display.red-2 {
+            background: #dc2626;
+            color: #fff;
+        }
+
+        .score-display.red-3 {
+            background: #b91c1c;
+            color: #fff;
+        }
+
+        .score-display.red-4 {
+            background: #991b1b;
+            color: #fff;
+        }
+
+        .score-display.red-5 {
+            background: #7f1d1d;
+            color: #fff;
+        }
+
+        .score-label {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+        }
+
+        /* Exit Strategy */
+        .exit-strategy {
+            background: var(--bg-card);
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .exit-strategy h3 {
+            color: var(--green);
+            margin-bottom: 10px;
+        }
+
+        .exit-strategy ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .exit-strategy li {
+            padding: 8px 0;
+            padding-left: 25px;
+            position: relative;
+        }
+
+        .exit-strategy li::before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 12px 24px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: transform 0.2s, opacity 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        .btn-secondary {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            border: 2px solid var(--border);
+        }
+
+        .btn-danger {
+            background: var(--red-dark);
+            color: #fff;
+        }
+
+        .btn-success {
+            background: var(--green);
+            color: #000;
+        }
+
+        /* History Table */
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .history-table th,
+        .history-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .history-table th {
+            background: var(--bg-card);
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .history-table tr:hover {
+            background: var(--bg-card);
+        }
+
+        .history-table .score-cell {
+            font-weight: bold;
+        }
+
+        .history-table .missing-cell {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            max-width: 200px;
+        }
+
+        .history-table .comments-cell {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            max-width: 250px;
+            word-wrap: break-word;
+        }
+
+        .history-table .delete-btn {
+            background: none;
+            border: none;
+            color: var(--red-light);
+            cursor: pointer;
+            font-size: 1.1rem;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .history-table .delete-btn:hover {
+            background: var(--red-light);
+            color: #fff;
+            transform: none;
+        }
+
+        .no-history {
+            text-align: center;
+            color: var(--text-secondary);
+            padding: 30px;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .score-display {
+                font-size: 2rem;
+                padding: 15px 30px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+            }
+
+            .history-table {
+                font-size: 0.85rem;
+            }
+
+            .history-table th,
+            .history-table td {
+                padding: 8px 6px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>TradeCheck</h1>
+            <p class="tagline">Pre-trade checklist & scoring system</p>
+            <div class="ticker-input">
+                <input type="text" id="ticker" placeholder="TICKER" maxlength="10">
+            </div>
+        </header>
+
+        <!-- General Parameters -->
+        <div class="card">
+            <h2>📊 General Parameters</h2>
+
+            <div class="dropdown-item">
+                <div class="dropdown-label">
+                    <div class="label-text">Market Direction</div>
+                    <div class="note">Are Market breadth numbers good? Is 4.5R good?</div>
+                </div>
+                <select id="marketDirection">
+                    <option value="0">Downtrend</option>
+                    <option value="0">Choppy</option>
+                    <option value="1">Uptrend</option>
+                </select>
+            </div>
+
+            <div class="checklist-item">
+                <input type="checkbox" id="relativeStrength">
+                <label for="relativeStrength">
+                    <div class="label-text">Relative Strength</div>
+                    <div class="note">Stock should be relatively strong specially during downfall</div>
+                </label>
+            </div>
+
+            <div class="checklist-item">
+                <input type="checkbox" id="sectorStrength">
+                <label for="sectorStrength">
+                    <div class="label-text">Sector Strength</div>
+                </label>
+            </div>
+
+            <div class="dropdown-item">
+                <div class="dropdown-label">
+                    <div class="label-text">Watchlist Feedback</div>
+                    <div class="note">Are breakouts happening and giving follow through?</div>
+                </div>
+                <select id="watchlistFeedback">
+                    <option value="0">Bad</option>
+                    <option value="0">Okay</option>
+                    <option value="1">Good</option>
+                </select>
+            </div>
+
+            <div class="checklist-item">
+                <input type="checkbox" id="priorUpmove">
+                <label for="priorUpmove">
+                    <div class="label-text">Prior Good Upmove Present</div>
+                    <div class="note">Prior good upmove with volumes indicate institutions present</div>
+                </label>
+            </div>
+
+            <div class="checklist-item">
+                <input type="checkbox" id="linearClean">
+                <label for="linearClean">
+                    <div class="label-text">Linear and Clean</div>
+                    <div class="note">Respects important EMAs like 10/20. Doesn't have choppy action</div>
+                </label>
+            </div>
+
+            <div class="checklist-item">
+                <input type="checkbox" id="thrustPower">
+                <label for="thrustPower">
+                    <div class="label-text">Thrust Power</div>
+                    <div class="note">Capability of printing big candles</div>
+                </label>
+            </div>
+
+            <div class="checklist-item">
+                <input type="checkbox" id="tightness">
+                <label for="tightness">
+                    <div class="label-text">Tightness Before Entry</div>
+                    <div class="note">Inside Bars or Mini Coil like tightness. Volume dry-up at tightness</div>
+                </label>
+            </div>
+
+            <div class="checklist-item">
+                <input type="checkbox" id="nearEMA">
+                <label for="nearEMA">
+                    <div class="label-text">Not Too Far from 10/20 EMA</div>
+                </label>
+            </div>
+
+            <div class="checklist-item">
+                <input type="checkbox" id="earningsNotNear">
+                <label for="earningsNotNear">
+                    <div class="label-text">Earnings Not Near</div>
+                </label>
+            </div>
+        </div>
+
+        <!-- Setup Selection -->
+        <div class="card">
+            <h2>🎯 Setup Type</h2>
+
+            <div class="dropdown-item">
+                <div class="dropdown-label">
+                    <div class="label-text">Select Setup</div>
+                </div>
+                <select id="setupType">
+                    <option value="base">Base Breakout</option>
+                    <option value="baseCheat">Base Cheat</option>
+                    <option value="flag">Flag</option>
+                    <option value="ipo">IPO</option>
+                </select>
+            </div>
+
+            <!-- Base / Base Cheat Section -->
+            <div class="setup-section" id="baseSection">
+                <h3>Base Setup Criteria</h3>
+                <div class="checklist-item">
+                    <input type="checkbox" id="upperRange">
+                    <label for="upperRange">
+                        <div class="label-text">At Upper Range of Base</div>
+                        <div class="note">Stocks tend to chop more at lower range of base</div>
+                    </label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="vcpPattern">
+                    <label for="vcpPattern">
+                        <div class="label-text">VCP, Inverted H&S or Cup and Handle Present?</div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Flag Section -->
+            <div class="setup-section" id="flagSection">
+                <h3>Flag Setup Criteria</h3>
+                <div class="checklist-item">
+                    <input type="checkbox" id="hourlyGood">
+                    <label for="hourlyGood">
+                        <div class="label-text">Hourly Chart Looking Good</div>
+                    </label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="flagPattern">
+                    <label for="flagPattern">
+                        <div class="label-text">Crowbar, Fast Flag or Hook Present?</div>
+                        <div class="note">
+                            <strong>Crowbar:</strong> 2-3 small candles after a big candle<br>
+                            <strong>Fast Flag:</strong> EMAs catches up the price<br>
+                            <strong>Hook:</strong> Stock dips a bit to claim EMAs
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- IPO Section -->
+            <div class="setup-section" id="ipoSection">
+                <h3>IPO Setup Type</h3>
+                <div class="dropdown-item">
+                    <div class="dropdown-label">
+                        <div class="label-text">Select IPO Type</div>
+                    </div>
+                    <select id="ipoType">
+                        <option value="initialBoom">Initial Boom</option>
+                        <option value="ipoBase">IPO Base Breakout</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Comments -->
+        <div class="card">
+            <h2>📝 Notes</h2>
+            <textarea id="comments" placeholder="Add any observations, reasons for entry, or notes about this setup..."></textarea>
+        </div>
+
+        <!-- Score Display -->
+        <div class="card score-card">
+            <h2>📈 Score</h2>
+            <div class="score-display green" id="scoreDisplay">0/9</div>
+            <p class="score-label" id="scoreLabel">Complete the checklist above</p>
+
+            <div class="exit-strategy" id="exitStrategy">
+                <h3>🎯 Exit Strategy</h3>
+                <ul id="exitStrategyList">
+                    <li>Hold longer, trail by 20 EMA</li>
+                    <li>Partial sell into strength</li>
+                </ul>
+            </div>
+
+            <div class="action-buttons">
+                <button class="btn-success" onclick="saveToHistory()">💾 Save to History</button>
+                <button class="btn-secondary" onclick="resetForm()">🔄 Reset</button>
+            </div>
+        </div>
+
+        <!-- History -->
+        <div class="card">
+            <h2>📜 Trade History</h2>
+            <div id="historyContainer">
+                <p class="no-history">No trades saved yet</p>
+            </div>
+            <div class="action-buttons">
+                <button class="btn-secondary" onclick="exportCSV()">📥 Export as CSV</button>
+                <button class="btn-danger" onclick="clearHistory()">🗑️ Clear History</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const elements = {
+            ticker: document.getElementById('ticker'),
+            marketDirection: document.getElementById('marketDirection'),
+            relativeStrength: document.getElementById('relativeStrength'),
+            sectorStrength: document.getElementById('sectorStrength'),
+            watchlistFeedback: document.getElementById('watchlistFeedback'),
+            priorUpmove: document.getElementById('priorUpmove'),
+            linearClean: document.getElementById('linearClean'),
+            thrustPower: document.getElementById('thrustPower'),
+            tightness: document.getElementById('tightness'),
+            nearEMA: document.getElementById('nearEMA'),
+            earningsNotNear: document.getElementById('earningsNotNear'),
+            comments: document.getElementById('comments'),
+            setupType: document.getElementById('setupType'),
+            upperRange: document.getElementById('upperRange'),
+            vcpPattern: document.getElementById('vcpPattern'),
+            hourlyGood: document.getElementById('hourlyGood'),
+            flagPattern: document.getElementById('flagPattern'),
+            ipoType: document.getElementById('ipoType'),
+            scoreDisplay: document.getElementById('scoreDisplay'),
+            scoreLabel: document.getElementById('scoreLabel'),
+            exitStrategyList: document.getElementById('exitStrategyList'),
+            historyContainer: document.getElementById('historyContainer')
+        };
+
+        // Setup sections
+        const setupSections = {
+            base: document.getElementById('baseSection'),
+            baseCheat: document.getElementById('baseSection'),
+            flag: document.getElementById('flagSection'),
+            ipo: document.getElementById('ipoSection')
+        };
+
+        // Calculate score
+        function calculateScore() {
+            let score = 0;
+            let maxScore = 10;
+
+            // General parameters
+            score += parseInt(elements.marketDirection.value);
+            score += elements.relativeStrength.checked ? 1 : 0;
+            score += elements.sectorStrength.checked ? 1 : 0;
+            score += parseInt(elements.watchlistFeedback.value);
+            score += elements.priorUpmove.checked ? 1 : 0;
+            score += elements.linearClean.checked ? 1 : 0;
+            score += elements.thrustPower.checked ? 1 : 0;
+            score += elements.tightness.checked ? 1 : 0;
+            score += elements.nearEMA.checked ? 1 : 0;
+            score += elements.earningsNotNear.checked ? 1 : 0;
+
+            // Setup-specific parameters
+            const setup = elements.setupType.value;
+
+            if (setup === 'base' || setup === 'baseCheat') {
+                maxScore = 12;
+                score += elements.upperRange.checked ? 1 : 0;
+                score += elements.vcpPattern.checked ? 1 : 0;
+            } else if (setup === 'flag') {
+                maxScore = 12;
+                score += elements.hourlyGood.checked ? 1 : 0;
+                score += elements.flagPattern.checked ? 1 : 0;
+            }
+            // IPO has no extra scoring, maxScore stays 9
+
+            updateScoreDisplay(score, maxScore);
+            updateExitStrategy();
+
+            return { score, maxScore };
+        }
+
+        // Update score display with color coding
+        function updateScoreDisplay(score, maxScore) {
+            const display = elements.scoreDisplay;
+            display.textContent = `${score}/${maxScore}`;
+
+            // Remove all color classes
+            display.className = 'score-display';
+
+            const diff = maxScore - score;
+
+            if (diff === 0) {
+                display.classList.add('green');
+                elements.scoreLabel.textContent = '🚀 Perfect setup! Go for it!';
+            } else if (diff === 1) {
+                display.classList.add('yellow');
+                elements.scoreLabel.textContent = '⚠️ Almost there, proceed with caution';
+            } else if (diff === 2) {
+                display.classList.add('red-1');
+                elements.scoreLabel.textContent = '⛔ Missing key criteria';
+            } else if (diff === 3) {
+                display.classList.add('red-2');
+                elements.scoreLabel.textContent = '⛔ Several criteria missing';
+            } else if (diff === 4) {
+                display.classList.add('red-3');
+                elements.scoreLabel.textContent = '🛑 Weak setup, reconsider';
+            } else if (diff === 5) {
+                display.classList.add('red-4');
+                elements.scoreLabel.textContent = '🛑 Very weak setup';
+            } else {
+                display.classList.add('red-5');
+                elements.scoreLabel.textContent = '🛑 Skip this trade';
+            }
+        }
+
+        // Update exit strategy based on setup
+        function updateExitStrategy() {
+            const setup = elements.setupType.value;
+            const ipoType = elements.ipoType.value;
+            let strategies = [];
+
+            if (setup === 'base' || setup === 'baseCheat') {
+                strategies = [
+                    'Hold longer, trail by 20 EMA',
+                    'Partial sell into strength'
+                ];
+            } else if (setup === 'flag') {
+                strategies = [
+                    'Focus on sell into strength',
+                    'Trail by 10 EMA'
+                ];
+            } else if (setup === 'ipo') {
+                if (ipoType === 'initialBoom') {
+                    strategies = [
+                        'Focus on sell into strength',
+                        'Trail by 10 EMA'
+                    ];
+                } else {
+                    strategies = [
+                        'Hold longer, trail by 20 EMA',
+                        'Partial sell into strength'
+                    ];
+                }
+            }
+
+            elements.exitStrategyList.innerHTML = strategies
+                .map(s => `<li>${s}</li>`)
+                .join('');
+        }
+
+        // Show/hide setup sections
+        function updateSetupSections() {
+            const setup = elements.setupType.value;
+
+            // Hide all sections
+            document.getElementById('baseSection').classList.remove('active');
+            document.getElementById('flagSection').classList.remove('active');
+            document.getElementById('ipoSection').classList.remove('active');
+
+            // Reset setup-specific checkboxes
+            elements.upperRange.checked = false;
+            elements.vcpPattern.checked = false;
+            elements.hourlyGood.checked = false;
+            elements.flagPattern.checked = false;
+
+            // Show relevant section
+            if (setup === 'base' || setup === 'baseCheat') {
+                document.getElementById('baseSection').classList.add('active');
+            } else if (setup === 'flag') {
+                document.getElementById('flagSection').classList.add('active');
+            } else if (setup === 'ipo') {
+                document.getElementById('ipoSection').classList.add('active');
+            }
+
+            calculateScore();
+        }
+
+        // Save to history
+        function saveToHistory() {
+            const ticker = elements.ticker.value.trim().toUpperCase();
+
+            if (!ticker) {
+                alert('Please enter a ticker symbol');
+                elements.ticker.focus();
+                return;
+            }
+
+            const { score, maxScore } = calculateScore();
+            const setup = elements.setupType.value;
+            const ipoType = elements.ipoType.value;
+
+            // Collect missing criteria
+            const missing = [];
+            
+            // General parameters - dropdowns (include selected value)
+            if (parseInt(elements.marketDirection.value) === 0) {
+                const selectedText = elements.marketDirection.options[elements.marketDirection.selectedIndex].text;
+                missing.push(`Market Direction - ${selectedText}`);
+            }
+            if (parseInt(elements.watchlistFeedback.value) === 0) {
+                const selectedText = elements.watchlistFeedback.options[elements.watchlistFeedback.selectedIndex].text;
+                missing.push(`Watchlist Feedback - ${selectedText}`);
+            }
+            
+            // General parameters - checkboxes
+            if (!elements.relativeStrength.checked) missing.push('Relative Strength');
+            if (!elements.sectorStrength.checked) missing.push('Sector Strength');
+            if (!elements.priorUpmove.checked) missing.push('Prior Upmove');
+            if (!elements.linearClean.checked) missing.push('Linear & Clean');
+            if (!elements.thrustPower.checked) missing.push('Thrust Power');
+            if (!elements.tightness.checked) missing.push('Tightness');
+            if (!elements.nearEMA.checked) missing.push('Near EMA');
+            if (!elements.earningsNotNear.checked) missing.push('Earnings');
+            
+            // Setup-specific checkboxes
+            if (setup === 'base' || setup === 'baseCheat') {
+                if (!elements.upperRange.checked) missing.push('Upper Range');
+                if (!elements.vcpPattern.checked) missing.push('VCP/Pattern');
+            } else if (setup === 'flag') {
+                if (!elements.hourlyGood.checked) missing.push('Hourly Chart');
+                if (!elements.flagPattern.checked) missing.push('Flag Pattern');
+            }
+
+            let setupLabel = '';
+            switch (setup) {
+                case 'base': setupLabel = 'Base Breakout'; break;
+                case 'baseCheat': setupLabel = 'Base Cheat'; break;
+                case 'flag': setupLabel = 'Flag'; break;
+                case 'ipo': setupLabel = ipoType === 'initialBoom' ? 'IPO Initial Boom' : 'IPO Base Breakout'; break;
+            }
+
+            const exitStrategy = Array.from(elements.exitStrategyList.children)
+                .map(li => li.textContent)
+                .join('; ');
+
+            const comments = elements.comments.value.trim();
+
+            const entry = {
+                id: Date.now(),
+                date: new Date().toLocaleDateString('en-GB'),
+                ticker,
+                score,
+                maxScore,
+                setup: setupLabel,
+                exitStrategy,
+                missingCriteria: missing,
+                comments
+            };
+
+            const history = getHistory();
+            history.unshift(entry);
+            localStorage.setItem('tradeCheckHistory', JSON.stringify(history));
+
+            renderHistory();
+            alert(`✅ Saved ${ticker} to history!`);
+        }
+
+        // Get history from localStorage
+        function getHistory() {
+            const data = localStorage.getItem('tradeCheckHistory');
+            return data ? JSON.parse(data) : [];
+        }
+
+        // Render history table
+        function renderHistory() {
+            const history = getHistory();
+
+            if (history.length === 0) {
+                elements.historyContainer.innerHTML = '<p class="no-history">No trades saved yet</p>';
+                return;
+            }
+
+            const table = `
+                <table class="history-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Ticker</th>
+                            <th>Score</th>
+                            <th>Setup</th>
+                            <th>Missing Criteria</th>
+                            <th>Notes</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${history.map(entry => `
+                            <tr>
+                                <td>${entry.date}</td>
+                                <td><strong>${entry.ticker}</strong></td>
+                                <td class="score-cell">${entry.score}/${entry.maxScore}</td>
+                                <td>${entry.setup}</td>
+                                <td class="missing-cell">${entry.missingCriteria && entry.missingCriteria.length > 0 ? entry.missingCriteria.join(', ') : '✓ All met'}</td>
+                                <td class="comments-cell">${entry.comments || '-'}</td>
+                                <td><button class="delete-btn" onclick="deleteEntry(${entry.id})" title="Delete">🗑️</button></td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+
+            elements.historyContainer.innerHTML = table;
+        }
+
+        // Export as CSV
+        function exportCSV() {
+            const history = getHistory();
+
+            if (history.length === 0) {
+                alert('No history to export');
+                return;
+            }
+
+            const headers = ['Date', 'Ticker', 'Score', 'Max Score', 'Setup', 'Missing Criteria', 'Notes'];
+            const rows = history.map(entry => [
+                entry.date,
+                entry.ticker,
+                entry.score,
+                entry.maxScore,
+                entry.setup,
+                `"${entry.missingCriteria && entry.missingCriteria.length > 0 ? entry.missingCriteria.join(', ') : 'All met'}"`,
+                `"${entry.comments || ''}"`
+            ]);
+
+            const csv = [headers.join(','), ...rows.map(row => row.join(','))].join('\n');
+
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `tradecheck-history-${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // Clear history
+        function clearHistory() {
+            if (confirm('Are you sure you want to clear all history? This cannot be undone.')) {
+                localStorage.removeItem('tradeCheckHistory');
+                renderHistory();
+            }
+        }
+
+        // Delete single entry
+        function deleteEntry(id) {
+            if (confirm('Delete this entry?')) {
+                const history = getHistory().filter(entry => entry.id !== id);
+                localStorage.setItem('tradeCheckHistory', JSON.stringify(history));
+                renderHistory();
+            }
+        }
+
+        // Reset form
+        function resetForm() {
+            elements.ticker.value = '';
+            elements.comments.value = '';
+            elements.marketDirection.selectedIndex = 0;
+            elements.relativeStrength.checked = false;
+            elements.sectorStrength.checked = false;
+            elements.watchlistFeedback.selectedIndex = 0;
+            elements.priorUpmove.checked = false;
+            elements.linearClean.checked = false;
+            elements.thrustPower.checked = false;
+            elements.tightness.checked = false;
+            elements.nearEMA.checked = false;
+            elements.earningsNotNear.checked = false;
+            elements.setupType.selectedIndex = 0;
+            elements.upperRange.checked = false;
+            elements.vcpPattern.checked = false;
+            elements.hourlyGood.checked = false;
+            elements.flagPattern.checked = false;
+            elements.ipoType.selectedIndex = 0;
+
+            updateSetupSections();
+        }
+
+        // Event listeners
+        const allInputs = document.querySelectorAll('input[type="checkbox"], select');
+        allInputs.forEach(input => {
+            input.addEventListener('change', calculateScore);
+        });
+
+        elements.setupType.addEventListener('change', updateSetupSections);
+        elements.ipoType.addEventListener('change', calculateScore);
+
+        // Initialize
+        updateSetupSections();
+        renderHistory();
+    </script>
+</body>
+</html>
